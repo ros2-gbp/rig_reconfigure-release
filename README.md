@@ -27,10 +27,15 @@ The editor can be launched using `ros2 run rig_reconfigure rig_reconfigure`.
 
 The following features are not implemented yet, but would be nice to have. PRs are welcome!
 
-- feedback about the success of modifying parameters
-- feedback if the node dies while parameters are displayed
+- feedback about the success of modifying parameters 
+  (intended: directly behind the parameters, e.g. using spinners / checkmarks)
 - support for array parameters
-- buttons for expanding / collapsing all tree nodes
+- consideration of limits specified in the [parameter description](https://docs.ros2.org/galactic/api/rcl_interfaces/msg/ParameterDescriptor.html)
+
+## Known issues
+
+- CPU usage is high when using non-hardware-accelerated OpenGL implementation, which is usually the case in VNC connections
+- vsync via glfw doesn't work in VNC sessions (leading to even higher CPU usage), enable the manual frame rate limiting to reduce it
 
 ## Screenshots
 
