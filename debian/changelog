@@ -1,0 +1,22 @@
+ros-iron-rig-reconfigure (1.1.0-1bullseye) bullseye; urgency=high
+
+  * Accept more parameter path separators
+  * allow scientific notation for float-parameters
+  * Manual FPS limiting for VNC sessions
+  * add support for string parameters
+  * allow clicking on node text for folding/unfolding
+  * added buttons for expanding / collapsing all parameter nodes
+  * sort node names in alphabetical order
+  * periodic node refreshing + warning about died nodes
+  * improved sizing of the list box
+  * Contributors: Dominik, Jonas Otto, Scott K Logan
+
+ -- Team Spatzenhirn <team-spatzenhirn@uni-ulm.de>  Sun, 23 Apr 2023 22:00:00 -0000
+
+ros-iron-rig-reconfigure (1.0.0-1bullseye) bullseye; urgency=high
+
+  * initial release
+
+ -- Team Spatzenhirn <team-spatzenhirn@uni-ulm.de>  Fri, 24 Feb 2023 23:00:00 -0000
+
+
