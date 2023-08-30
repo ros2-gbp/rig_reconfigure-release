@@ -1,7 +1,7 @@
 /**
  * @file   service_wrapper.cpp
  * @author Dominik Authaler
- * @date   22.01.2022
+ * @date   22.01.2023
  *
  * Utility class wrapping all the service related calls.
  */
@@ -13,17 +13,10 @@ using namespace std::chrono_literals;
 
 constexpr auto ROS_SERVICE_TIMEOUT = 1s;
 
-template <typename T>
-bool checkServiceAvailability(T &serviceClient, std::chrono::seconds &timeout) {
-    if (!serviceClient->wait_for_service(timeout) || !rclcpp::ok()) {
-        return false;
-    }
-
-    return true;
-}
-
-ServiceWrapper::ServiceWrapper(bool ignoreDefaultParameters) : ignoreDefaultParameters(ignoreDefaultParameters) {
-    node = rclcpp::Node::make_shared("rig_reconfigure");
+ServiceWrapper::ServiceWrapper(bool ignoreDefaultParameters_) : ignoreDefaultParameters(ignoreDefaultParameters_) {
+    // according to https://design.ros2.org/articles/topic_and_service_names.html an underscore indicates
+    // hidden nodes
+    node = rclcpp::Node::make_shared("_rig_reconfigure");
 
     executor.add_node(node);
 
@@ -71,8 +64,17 @@ void ServiceWrapper::checkForTimeouts() {
 }
 
 void ServiceWrapper::setNodeOfInterest(const std::string &name) {
-    // TODO: cancel any requests related to the previously selected node?
-    //       Maybe this is already done in the destructor of the client?
+    if (listParametersClient) {
+        listParametersClient->prune_pending_requests();
+    }
+
+    if (getParametersClient) {
+        getParametersClient->prune_pending_requests();
+    }
+
+    if (setParametersClient) {
+        setParametersClient->prune_pending_requests();
+    }
 
     nodeName = name;
 
@@ -100,15 +102,34 @@ void ServiceWrapper::threadFunc() {
 void ServiceWrapper::handleRequest(const RequestPtr &request) {
     switch (request->type) {
         case Request::Type::QUERY_NODE_NAMES: {
-            auto response = std::make_shared<NodeNameResponse>(node->get_node_names());
+            // we are only interested in nodes which provide the parameter services and thus
+            // query directly the service names (instead of the node names via get_node_names())
+            const auto serviceMap = node->get_service_names_and_types();
 
-            // ignore node used for querying the services and ros2cli daemon nodes
-            std::erase_if(response->nodeNames, [nodeName=std::string("/") + node->get_name()](const std::string &s) {
-                return (s == nodeName) || s.starts_with("/_ros2cli_daemon_");
-            });
+            std::vector<std::string> nodeNames;
+            for (const auto &[serviceName, _] : serviceMap) {
+                // assumption: a node providing the list_parameters service hopefully also provides the services
+                //             for requesting and modifying parameter values
+                const auto idx = serviceName.find("/list_parameters");
+
+                if (idx == std::string::npos) {
+                    continue;
+                }
+
+                const std::string extractedNodeName = serviceName.substr(0, idx);
+
+                // ignore 'hidden' nodes (like the ros2cli daemon nodes)
+                if (extractedNodeName.starts_with("/_")) {
+                    continue;
+                }
+
+                nodeNames.push_back(extractedNodeName);
+            }
 
             // sort nodes alphabetically
-            std::sort(response->nodeNames.begin(), response->nodeNames.end());
+            std::sort(nodeNames.begin(), nodeNames.end());
+
+            auto response = std::make_shared<NodeNameResponse>(std::move(nodeNames));
 
             responseQueue.push(response);
             break;
@@ -204,7 +225,7 @@ void ServiceWrapper::handleRequest(const RequestPtr &request) {
     }
 }
 
-void ServiceWrapper::nodeParametersReceived(rclcpp::Client<rcl_interfaces::srv::ListParameters>::SharedFuture future,
+void ServiceWrapper::nodeParametersReceived(const rclcpp::Client<rcl_interfaces::srv::ListParameters>::SharedFuture &future,
                                             const std::shared_ptr<FutureTimeoutContainer> &timeoutContainer) {
     auto valueRequest = std::make_shared<ParameterValueRequest>(future.get()->result.names);
 
@@ -220,7 +241,7 @@ void ServiceWrapper::nodeParametersReceived(rclcpp::Client<rcl_interfaces::srv::
     requestQueue.push(std::move(valueRequest));
 }
 
-void ServiceWrapper::parameterValuesReceived(rclcpp::Client<rcl_interfaces::srv::GetParameters>::SharedFuture future,
+void ServiceWrapper::parameterValuesReceived(const rclcpp::Client<rcl_interfaces::srv::GetParameters>::SharedFuture &future,
                                              const std::vector<std::string> &parameterNames,
                                              const std::shared_ptr<FutureTimeoutContainer> &timeoutContainer) {
     auto response = std::make_shared<ParameterValueResponse>();
@@ -253,7 +274,7 @@ void ServiceWrapper::parameterValuesReceived(rclcpp::Client<rcl_interfaces::srv:
     responseQueue.push(response);
 }
 
-void ServiceWrapper::parameterModificationResponseReceived(rclcpp::Client<rcl_interfaces::srv::SetParameters>::SharedFuture future,
+void ServiceWrapper::parameterModificationResponseReceived(const rclcpp::Client<rcl_interfaces::srv::SetParameters>::SharedFuture &future,
                                                            const std::string &parameterName,
                                                            const std::shared_ptr<FutureTimeoutContainer> &timeoutContainer) {
     const auto &resultMsg = future.get();
