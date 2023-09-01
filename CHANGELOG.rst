@@ -2,6 +2,16 @@
 Changelog for package rig_reconfigure
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.3.2 (2023-09-01)
+------------------
+* add dominik as maintainer
+* Contributors: Jonas Otto
+
+1.3.1 (2023-09-01)
+------------------
+* remove git version information in info window (`#24 <https://github.com/teamspatzenhirn/rig_reconfigure/issues/24>`_)
+* Contributors: Jonas Otto
+
 1.3.0 (2023-08-30)
 ------------------
 * Only list nodes providing the parameter service (`#23 <https://github.com/teamspatzenhirn/rig_reconfigure/issues/23>`_)
