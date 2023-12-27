@@ -1,3 +1,26 @@
+## rig_reconfigure (iron) - 1.4.0-1
+
+The packages in the `rig_reconfigure` repository were released into the `iron` distro by running `/usr/bin/bloom-release --ros-distro iron --override-release-repository-push-url git@github.com:ros2-gbp/rig_reconfigure-release.git rig_reconfigure` on `Wed, 27 Dec 2023 15:48:37 -0000`
+
+The `rig_reconfigure` package was released.
+
+Version of package(s) in repository `rig_reconfigure`:
+
+- upstream repository: https://github.com/teamspatzenhirn/rig_reconfigure.git
+- release repository: https://github.com/ros2-gbp/rig_reconfigure-release.git
+- rosdistro version: `1.3.2-1`
+- old version: `1.3.2-1`
+- new version: `1.4.0-1`
+
+Versions of tools used:
+
+- bloom version: `0.11.2`
+- catkin_pkg version: `0.5.2`
+- rosdep version: `0.22.2`
+- rosdistro version: `0.9.0`
+- vcstools version: `0.1.42`
+
+
 ## rig_reconfigure (rolling) - 1.4.0-1
 
 The packages in the `rig_reconfigure` repository were released into the `rolling` distro by running `/usr/bin/bloom-release --ros-distro rolling --override-release-repository-push-url git@github.com:ros2-gbp/rig_reconfigure-release.git rig_reconfigure` on `Wed, 27 Dec 2023 15:46:30 -0000`
