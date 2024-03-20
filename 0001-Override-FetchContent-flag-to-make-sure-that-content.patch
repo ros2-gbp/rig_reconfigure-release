@@ -1,4 +1,4 @@
-From 328b0b7517f01a867dd531a635b2fcb618401cb5 Mon Sep 17 00:00:00 2001
+From df79b048a0097f06917494f02f70075c14e15e5b Mon Sep 17 00:00:00 2001
 From: Chris Lalancette <clalancette@gmail.com>
 Date: Wed, 20 Mar 2024 13:42:09 -0400
 Subject: [PATCH] Override FetchContent flag to make sure that content is
