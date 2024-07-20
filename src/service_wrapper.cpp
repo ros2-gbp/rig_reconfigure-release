@@ -3,11 +3,14 @@
  * @author Dominik Authaler
  * @date   22.01.2023
  *
- * Utility class wrapping all the service related calls.
+ * Utility class wrapping all the service related calls. This class has been initially inserted in order to allow
+ * using the tool together with ROS 1 by simple replacing this class. However, as of 01/2024 there are no plans to do
+ * so.
  */
 
 #include "service_wrapper.hpp"
 #include <chrono>
+#include <regex>
 
 using namespace std::chrono_literals;
 
@@ -123,11 +126,18 @@ void ServiceWrapper::handleRequest(const RequestPtr &request) {
                     continue;
                 }
 
+                {
+                    auto tmpclient = node->create_client<rcl_interfaces::srv::ListParameters>(serviceName);
+                    if (!tmpclient->service_is_ready()) {
+                        // Service is known, but not ready.
+                        // This happens e.g. if this is the currently selected node,
+                        // so we still have clients for the service, but the node has died.
+                        continue;
+                    }
+                }
+
                 nodeNames.push_back(extractedNodeName);
             }
-
-            // sort nodes alphabetically
-            std::sort(nodeNames.begin(), nodeNames.end());
 
             auto response = std::make_shared<NodeNameResponse>(std::move(nodeNames));
 
@@ -230,9 +240,11 @@ void ServiceWrapper::nodeParametersReceived(const rclcpp::Client<rcl_interfaces:
     auto valueRequest = std::make_shared<ParameterValueRequest>(future.get()->result.names);
 
     if (ignoreDefaultParameters) {
-        // ignore node used for querying the services
+        // Hide default parameters "use_sim_time", "qos_overrides./*", "start_type_description_service"
+        static std::regex HIDDEN_PARAMETER_REGEX = std::regex(
+                "^use_sim_time$|^qos_overrides\\.\\/.*$|^start_type_description_service$");
         std::erase_if(valueRequest->parameterNames, [](const std::string &s) {
-            return (s.starts_with("qos_overrides./") || s.starts_with("use_sim_time"));
+            return std::regex_match(s, HIDDEN_PARAMETER_REGEX);
         });
     }
 
@@ -284,4 +296,8 @@ void ServiceWrapper::parameterModificationResponseReceived(const rclcpp::Client<
     timeoutContainer->handled = true;
 
     responseQueue.push(response);
+}
+
+void ServiceWrapper::setIgnoreDefaultParameters(bool ignoreDefaultParameters_) {
+    this->ignoreDefaultParameters = ignoreDefaultParameters_;
 }
