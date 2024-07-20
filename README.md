@@ -1,3 +1,26 @@
+## rig_reconfigure (jazzy) - 1.5.0-1
+
+The packages in the `rig_reconfigure` repository were released into the `jazzy` distro by running `/bin/bloom-release --rosdistro jazzy rig_reconfigure` on `Sat, 20 Jul 2024 15:49:55 -0000`
+
+The `rig_reconfigure` package was released.
+
+Version of package(s) in repository `rig_reconfigure`:
+
+- upstream repository: https://github.com/teamspatzenhirn/rig_reconfigure.git
+- release repository: https://github.com/ros2-gbp/rig_reconfigure-release.git
+- rosdistro version: `1.4.0-4`
+- old version: `1.4.0-4`
+- new version: `1.5.0-1`
+
+Versions of tools used:
+
+- bloom version: `0.12.0`
+- catkin_pkg version: `1.0.0`
+- rosdep version: `0.24.0`
+- rosdistro version: `0.9.1`
+- vcstools version: `0.1.42`
+
+
 ## rig_reconfigure (rolling) - 1.4.0-3
 
 The packages in the `rig_reconfigure` repository were released into the `rolling` distro by running `/usr/bin/bloom-release --track rolling --rosdistro rolling rig_reconfigure` on `Wed, 20 Mar 2024 17:43:09 -0000`
