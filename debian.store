@@ -1,1 +1,1 @@
-{"base": "b58ea26", "parent": "debian/rolling/rig_reconfigure", "previous": "4f1089c", "trim": "", "trimbase": ""}
+{"base": "3ac8f04d33ed", "parent": "debian/kilted/rig_reconfigure", "previous": "4c24a989cf5c", "trim": "", "trimbase": ""}
