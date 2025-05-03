@@ -1,0 +1,12 @@
+Source: ros-jazzy-rig-reconfigure
+Section: misc
+Priority: optional
+Maintainer: Team Spatzenhirn <team-spatzenhirn@uni-ulm.de>
+Build-Depends: debhelper (>= 9.0.0), git, libglfw3-dev, ros-jazzy-ament-cmake, ros-jazzy-ament-index-cpp, ros-jazzy-backward-ros, ros-jazzy-rclcpp, ros-jazzy-ros-workspace
+Homepage: 
+Standards-Version: 3.9.2
+
+Package: ros-jazzy-rig-reconfigure
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libglfw3-dev, ros-jazzy-ament-index-cpp, ros-jazzy-backward-ros, ros-jazzy-rclcpp, ros-jazzy-ros-workspace
+Description: Standalone GUI tool for editing node parameters at runtime.
