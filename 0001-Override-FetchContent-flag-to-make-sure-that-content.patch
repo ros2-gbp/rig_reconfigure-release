@@ -1,4 +1,4 @@
-From 8d4e562d74b6acb01c6fa5e88e5fd6357fe5ce41 Mon Sep 17 00:00:00 2001
+From 2fd74a5d0c177391e33280c22ef220aca076a125 Mon Sep 17 00:00:00 2001
 From: Chris Lalancette <clalancette@gmail.com>
 Date: Wed, 20 Mar 2024 13:42:09 -0400
 Subject: [PATCH] Override FetchContent flag to make sure that content is
@@ -28,5 +28,5 @@ index a856369..b36b206 100755
  
  override_dh_auto_build:
 -- 
-2.43.0
+2.34.1
 
